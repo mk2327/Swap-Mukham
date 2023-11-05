@@ -6,13 +6,6 @@ from utils import scale_bbox_from_center
 
 detect_conditions = [
     "best detection",
-    "left most",
-    "right most",
-    "top most",
-    "bottom most",
-    "middle",
-    "biggest",
-    "smallest",
 ]
 
 swap_options_list = [
