@@ -3,30 +3,16 @@ import cv2
 import torch
 import gfpgan
 from PIL import Image
-from upscaler.RealESRGAN import RealESRGAN
-from upscaler.codeformer import CodeFormerEnhancer
 
 def gfpgan_runner(img, model):
     _, imgs, _ = model.enhance(img, paste_back=True, has_aligned=True)
     return imgs[0]
 
 
-def realesrgan_runner(img, model):
-    img = model.predict(img)
-    return img
-
-
-def codeformer_runner(img, model):
-    img = model.enhance(img)
-    return img
 
 
 supported_enhancers = {
-    "CodeFormer": ("./assets/pretrained_models/codeformer.onnx", codeformer_runner),
-    "GFPGAN": ("./assets/pretrained_models/GFPGANv1.4.pth", gfpgan_runner),
-    "REAL-ESRGAN 2x": ("./assets/pretrained_models/RealESRGAN_x2.pth", realesrgan_runner),
-    "REAL-ESRGAN 4x": ("./assets/pretrained_models/RealESRGAN_x4.pth", realesrgan_runner),
-    "REAL-ESRGAN 8x": ("./assets/pretrained_models/RealESRGAN_x8.pth", realesrgan_runner)
+    "GFPGAN": ("./assets/pretrained_models/GFPGANv1.4.pth", gfpgan_runner)
 }
 
 cv2_interpolations = ["LANCZOS4", "CUBIC", "NEAREST"]
@@ -45,19 +31,8 @@ def load_face_enhancer_model(name='GFPGAN', device="cpu"):
     if name in supported_enhancers.keys():
         model_path, model_runner = supported_enhancers.get(name)
         model_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), model_path)
-    if name == 'CodeFormer':
-        model = CodeFormerEnhancer(model_path=model_path, device=device)
-    elif name == 'GFPGAN':
+    if name == 'GFPGAN':
         model = gfpgan.GFPGANer(model_path=model_path, upscale=1, device=device)
-    elif name == 'REAL-ESRGAN 2x':
-        model = RealESRGAN(device, scale=2)
-        model.load_weights(model_path, download=False)
-    elif name == 'REAL-ESRGAN 4x':
-        model = RealESRGAN(device, scale=4)
-        model.load_weights(model_path, download=False)
-    elif name == 'REAL-ESRGAN 8x':
-        model = RealESRGAN(device, scale=8)
-        model.load_weights(model_path, download=False)
     elif name == 'LANCZOS4':
         model = None
         model_runner = lambda img, _: cv2.resize(img, (512,512), interpolation=cv2.INTER_LANCZOS4)
