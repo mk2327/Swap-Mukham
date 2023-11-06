@@ -380,7 +380,7 @@ def process(
 
     ## ------------------------------ DIRECTORY ------------------------------
 
-    elif input_type == "Directory":
+    if input_type == "Directory":
         extensions = ["jpg", "jpeg", "png", "bmp", "tiff", "ico", "webp"]
         temp_path = os.path.join(output_path, output_name)
         if os.path.exists(temp_path):
