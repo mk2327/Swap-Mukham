@@ -884,4 +884,4 @@ if __name__ == "__main__":
     if USE_COLAB:
         print("Running in colab mode")
 
-    interface.launch(share=USE_COLAB)
+    interface.queue.launch(share=USE_COLAB)
